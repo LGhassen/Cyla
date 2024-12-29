@@ -15,10 +15,12 @@ Opening the part GUI brings up the following settings menu, you can change setti
 ![enter image description here](https://i.imgur.com/CLavprx.png)
 ## Dimensions
 Refer to this diagram
+
 ![enter image description here](https://i.imgur.com/Ky4BINi.png)
 
 ## Lighting mode
 There's a few lighting modes you can select from, we can understand the lighting modes by looking at this diagram of a cross-section
+
 ![enter image description here](https://i.imgur.com/wFH7jPW.png)
 
  - TransparentTop: Only the top is transparent, other sides will cast shadows, use for Niven rings. Sunsets are very difficult to see in this mode unless inner and outer radiuses are very close to each other and there's a decent height, otherwise, there will not be enough "grazing" distance for light to go through and scatter.
