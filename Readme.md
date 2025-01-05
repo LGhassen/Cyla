@@ -1,4 +1,3 @@
-
 # Cyla - Cylindrical atmospheres rendering
 
 This is a quick KSP plugin to add Cylindrical atmospheres to KSP vessels, for use with Niven rings or O'Neill cylinders.
@@ -18,13 +17,14 @@ Refer to this diagram
 
 ![enter image description here](https://i.imgur.com/Ky4BINi.png)
 
+Transparent radius has also been added and denotes the radius of the transparent section (so a part of the wall between inner and outer radius can be made transparent).
+
 ## Lighting mode
 There's a few lighting modes you can select from, we can understand the lighting modes by looking at this diagram of a cross-section
 
 ![enter image description here](https://i.imgur.com/wFH7jPW.png)
 
- - TransparentTop: Only the top is transparent, other sides will cast shadows, use for Niven rings. Sunsets are very difficult to see in this mode unless inner and outer radiuses are very close to each other and there's a decent height, otherwise, there will not be enough "grazing" distance for light to go through and scatter.
- - TransparentSideWalls: Only the sides are transparent, use preferably with an inner radius of zero, to emulate O'Neill cylinders lit from the sides.
+ - TransparentTopAndSides: Top is transparent, and the side is transparent up to a configurable radius, other parts will cast shadows, use for Niven rings with a non-zero inner radius, optionally a part of the side wall can be made transparent with the transparent radius. Can also emulate O'Neill cylinders lit from the sides by setting the inner radius to zero and configuring the transparent raidius.
  - TransparentFloor
  - Unlit: Light always reaches all parts of the atmo, no sunsets or color shifts with distance, use when you can't see the atmo due to geometry/self-shadowing.
 
