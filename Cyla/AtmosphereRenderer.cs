@@ -8,7 +8,7 @@ namespace Cyla
     {
         private GameObject quadGameObject;
         private Material atmosphereMaterial;
-        private LightingMode currentLightingMode = LightingMode.TransparentTop;
+        private LightingMode currentLightingMode = LightingMode.TransparentTopAndSide;
         private int frame = 0;
         private Light targetLight = null;
 
@@ -18,6 +18,7 @@ namespace Cyla
         private static readonly int MieScaleHeightProperty = Shader.PropertyToID("mieScaleHeight");
         private static readonly int MiePhaseAsymmetryProperty = Shader.PropertyToID("miePhaseAsymmetry");
         private static readonly int InnerRadiusProperty = Shader.PropertyToID("innerRadius");
+        private static readonly int TransparentRadiusProperty = Shader.PropertyToID("transparentRadius");
         private static readonly int OuterRadiusProperty = Shader.PropertyToID("outerRadius");
         private static readonly int HeightProperty = Shader.PropertyToID("height");
         private static readonly int CenterPositionProperty = Shader.PropertyToID("centerPosition");
@@ -81,7 +82,7 @@ namespace Cyla
         }
 
         public void OnUpdate(
-            float innerRadius, float outerRadius, float height, Vector3 centerPosition, float pitch, float yaw,
+            float innerRadius, float transparentRadius, float outerRadius, float height, Vector3 centerPosition, float pitch, float yaw,
             Vector3 rayleighScattering, Vector3 mieScattering, float rayleighScaleHeight, float mieScaleHeight,
             float miePhaseAsymmetry, int raymarchingIterations, int lightingIterations, bool ditheredRaymarching,
             LightingMode lightingMode)
@@ -97,6 +98,10 @@ namespace Cyla
 
                 atmosphereMaterial.SetFloat(InnerRadiusProperty, innerRadius);
                 atmosphereMaterial.SetFloat(OuterRadiusProperty, outerRadius);
+
+                transparentRadius = Mathf.Clamp(transparentRadius, innerRadius, outerRadius - 1e-5f);
+                atmosphereMaterial.SetFloat(TransparentRadiusProperty, transparentRadius);
+
                 atmosphereMaterial.SetFloat(HeightProperty, height);
 
                 atmosphereMaterial.SetVector(CenterPositionProperty, centerPosition);
@@ -128,27 +133,18 @@ namespace Cyla
             { 
                 switch (lightingMode)
                 {
-                    case LightingMode.TransparentTop:
-                        atmosphereMaterial.EnableKeyword("TRANSPARENT_TOP");
-                        atmosphereMaterial.DisableKeyword("TRANSPARENT_SIDE_WALLS");
-                        atmosphereMaterial.DisableKeyword("TRANSPARENT_FLOOR");
-                        atmosphereMaterial.DisableKeyword("UNLIT");
-                        break;
-                    case LightingMode.TransparentSideWalls:
-                        atmosphereMaterial.DisableKeyword("TRANSPARENT_TOP");
-                        atmosphereMaterial.EnableKeyword("TRANSPARENT_SIDE_WALLS");
+                    case LightingMode.TransparentTopAndSide:
+                        atmosphereMaterial.EnableKeyword("TRANSPARENT_TOP_AND_SIDE");
                         atmosphereMaterial.DisableKeyword("TRANSPARENT_FLOOR");
                         atmosphereMaterial.DisableKeyword("UNLIT");
                         break;
                     case LightingMode.TransparentFloor:
-                        atmosphereMaterial.DisableKeyword("TRANSPARENT_TOP");
-                        atmosphereMaterial.DisableKeyword("TRANSPARENT_SIDE_WALLS");
+                        atmosphereMaterial.DisableKeyword("TRANSPARENT_TOP_AND_SIDE");
                         atmosphereMaterial.EnableKeyword("TRANSPARENT_FLOOR");
                         atmosphereMaterial.DisableKeyword("UNLIT");
                         break;
                     case LightingMode.Unlit:
-                        atmosphereMaterial.DisableKeyword("TRANSPARENT_TOP");
-                        atmosphereMaterial.DisableKeyword("TRANSPARENT_SIDE_WALLS");
+                        atmosphereMaterial.DisableKeyword("TRANSPARENT_TOP_AND_SIDE");
                         atmosphereMaterial.DisableKeyword("TRANSPARENT_FLOOR");
                         atmosphereMaterial.EnableKeyword("UNLIT");
                         break;

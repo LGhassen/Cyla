@@ -2,8 +2,7 @@
 {
     public enum LightingMode
     {
-        TransparentTop,
-        TransparentSideWalls,
+        TransparentTopAndSide,
         TransparentFloor,
         Unlit
     }

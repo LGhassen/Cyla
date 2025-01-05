@@ -11,6 +11,10 @@ namespace Cyla
         [UI_FloatEdit(scene = UI_Scene.All, minValue = 0f, incrementLarge = 100f, incrementSmall = 1f, incrementSlide = 0.1f)]
         public float innerRadius = 9.5f;
 
+        [KSPField(isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Transparent Radius")]
+        [UI_FloatEdit(scene = UI_Scene.All, minValue = 0.1f, incrementLarge = 100f, incrementSmall = 1f, incrementSlide = 0.1f)]
+        public float transparentRadius = 9.5f;
+
         [KSPField(isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Outer Radius")]
         [UI_FloatEdit(scene = UI_Scene.All, minValue = 0.1f, incrementLarge = 100f, incrementSmall = 1f, incrementSlide = 0.1f)]
         public float outerRadius = 10f;
@@ -109,6 +113,7 @@ namespace Cyla
             base.OnLoad(node);
 
             if (node.HasValue("innerRadius")) innerRadius = float.Parse(node.GetValue("innerRadius"));
+            if (node.HasValue("transparentRadius")) transparentRadius = float.Parse(node.GetValue("transparentRadius"));
             if (node.HasValue("outerRadius")) outerRadius = float.Parse(node.GetValue("outerRadius"));
             if (node.HasValue("height")) height = float.Parse(node.GetValue("height"));
 
@@ -134,6 +139,7 @@ namespace Cyla
             base.OnSave(node);
 
             node.SetValue("innerRadius", innerRadius.ToString(), true);
+            node.SetValue("transparentRadius", transparentRadius.ToString(), true);
             node.SetValue("outerRadius", outerRadius.ToString(), true);
             node.SetValue("height", height.ToString(), true);
 
@@ -189,7 +195,7 @@ namespace Cyla
                                                                                   positionOffsetForward * gameObject.transform.forward +
                                                                                   positionOffsetUp * gameObject.transform.up);
 
-                atmosphereRenderer.OnUpdate(innerRadius, outerRadius, height, position, pitch, yaw, rayleighValue, mieValue,
+                atmosphereRenderer.OnUpdate(innerRadius, transparentRadius, outerRadius, height, position, pitch, yaw, rayleighValue, mieValue,
                                             rayleighScaleHeightValue, mieScaleHeightValue, miePhaseAsymmetry,
                                             (int)raymarchingIterations, (int)lightingIterations, ditheredRaymarching,
                                             (LightingMode)(lightingMode - 1));
