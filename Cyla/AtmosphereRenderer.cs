@@ -11,6 +11,7 @@ namespace Cyla
         private LightingMode currentLightingMode = LightingMode.TransparentTopAndSide;
         private int frame = 0;
         private Light targetLight = null;
+        private Transform lightEmitterTransform = null;
 
         private static readonly int RayleighScatteringProperty = Shader.PropertyToID("rayleighScattering");
         private static readonly int MieScatteringProperty = Shader.PropertyToID("mieScattering");
@@ -27,8 +28,8 @@ namespace Cyla
         private static readonly int TransmittanceIterationsProperty = Shader.PropertyToID("transmittanceIterations");
         private static readonly int DitheredRaymarchingProperty = Shader.PropertyToID("ditheredRaymarching");
         private static readonly int FrameProperty = Shader.PropertyToID("frame");
-        private static readonly int LightDirectionProperty = Shader.PropertyToID("lightDirection");
         private static readonly int LightColorProperty = Shader.PropertyToID("lightColor");
+        private static readonly int LightEmitterPositionProperty = Shader.PropertyToID("lightEmitterPosition");
 
         void Start()
         {
@@ -69,6 +70,13 @@ namespace Cyla
                     .Where(light => light.type == LightType.Directional && (light.cullingMask & 1 << 15) != 0)
                     .OrderByDescending(light => light.intensity)
                     .FirstOrDefault();
+            }
+
+            var sunCelestialBody = FlightGlobals.Bodies.SingleOrDefault(_cb => _cb.GetName() == "Sun");
+
+            if (sunCelestialBody != null)
+            {
+                lightEmitterTransform = sunCelestialBody.transform;
             }
         }
 
@@ -116,7 +124,24 @@ namespace Cyla
                 if (targetLight != null)
                 {
                     atmosphereMaterial.SetVector(LightColorProperty, targetLight.color);
-                    atmosphereMaterial.SetVector(LightDirectionProperty, -targetLight.transform.forward);
+                }
+                else
+                {
+                    atmosphereMaterial.SetVector(LightColorProperty, Vector4.one);
+                }
+
+                // If we have a sun celestial body, use its position, otherwise make up a position based on the main light direction
+                if (lightEmitterTransform != null)
+                {
+                    atmosphereMaterial.SetVector(LightEmitterPositionProperty, lightEmitterTransform.position);
+                }
+                else if (targetLight != null)
+                {
+                    atmosphereMaterial.SetVector(LightEmitterPositionProperty, -targetLight.transform.forward * 1e7f);
+                }
+                else
+                {
+                    atmosphereMaterial.SetVector(LightEmitterPositionProperty, new Vector3(1e7f, 1e7f, 1e7f));
                 }
 
                 SwitchLightingMode(lightingMode);
